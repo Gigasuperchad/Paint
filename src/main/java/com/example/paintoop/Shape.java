@@ -445,7 +445,4 @@ class Triangle extends Shape {
 
         drawSelection(gc);
     }
-
-    public Color getStrokeColor() { return strokeColor; }
-    public Color getFillColor() { return fillColor; }
 }
