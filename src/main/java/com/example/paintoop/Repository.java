@@ -7,4 +7,6 @@ public interface Repository {
     void removeShape(Shape shape);
     List<Shape> getAllShapes();
     void clear();
+    void undo();
+    void saveState();
 }

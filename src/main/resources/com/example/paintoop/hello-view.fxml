@@ -15,8 +15,9 @@
     <HBox prefHeight="50.0" prefWidth="200.0" spacing="10">
         <children>
             <Button onAction="#onSelectButtonClick" text="Выделение" />
-            <Button onAction="#onSquareButtonClick" text="Квадрат" />
-            <Button onAction="#onCircleButtonClick" text="Круг" />
+            <Button onAction="#onRectangleButtonClick" text="Прямоугольник" />
+            <Button onAction="#onEllipseButtonClick" text="Эллипс" />
+            <Button onAction="#onLineButtonClick" text="Линия" />
             <Button onAction="#onTriangleButtonClick" text="Треугольник" />
             <Button onAction="#onDeleteButtonClick" text="Удалить" />
             <Button onAction="#onClearButtonClick" text="Очистить" />
