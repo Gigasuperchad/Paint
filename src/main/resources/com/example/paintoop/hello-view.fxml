@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" spacing="15.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.12" fx:controller="com.example.paintoop.HelloController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <Label fx:id="welcomeText" text="Выберите инструмент" />
+
+    <HBox prefHeight="50.0" prefWidth="200.0" spacing="10">
+        <children>
+            <Button onAction="#onSelectButtonClick" text="Выделение" />
+            <Button onAction="#onSquareButtonClick" text="Квадрат" />
+            <Button onAction="#onCircleButtonClick" text="Круг" />
+            <Button onAction="#onTriangleButtonClick" text="Треугольник" />
+            <Button onAction="#onDeleteButtonClick" text="Удалить" />
+            <Button onAction="#onClearButtonClick" text="Очистить" />
+        </children>
+    </HBox>
+
+    <HBox prefHeight="40.0" prefWidth="200.0" spacing="10" alignment="CENTER_LEFT">
+        <children>
+            <Label text="Контур:" />
+            <Button fx:id="outlineNoneButton" onAction="#onOutlineNoneClick" text="Нет" />
+            <Button fx:id="outlineSolidButton" onAction="#onOutlineSolidClick" text="Сплошной" />
+            <ColorPicker fx:id="outlineColorPicker" />
+        </children>
+    </HBox>
+
+    <HBox prefHeight="40.0" prefWidth="200.0" spacing="10" alignment="CENTER_LEFT">
+        <children>
+            <Label text="Заливка:" />
+            <Button fx:id="fillNoneButton" onAction="#onFillNoneClick" text="Нет" />
+            <Button fx:id="fillSolidButton" onAction="#onFillSolidClick" text="Сплошная" />
+            <ColorPicker fx:id="fillColorPicker" />
+        </children>
+    </HBox>
+
+    <HBox prefHeight="400.0" prefWidth="600.0">
+        <children>
+            <Canvas fx:id="canvas" height="400.0" width="600.0" />
+        </children>
+    </HBox>
+</VBox>
