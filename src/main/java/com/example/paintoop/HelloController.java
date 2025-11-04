@@ -10,7 +10,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -123,23 +122,19 @@ public class HelloController {
 
         if (file != null) {
             try {
-                // Создаем временный canvas для рисования
                 double virtualWidth = drawingCanvas.getVirtualWidth();
                 double virtualHeight = drawingCanvas.getVirtualHeight();
 
                 Canvas tempCanvas = new Canvas(virtualWidth, virtualHeight);
                 GraphicsContext imageGC = tempCanvas.getGraphicsContext2D();
 
-                // Заливаем белым фоном
                 imageGC.setFill(Color.WHITE);
                 imageGC.fillRect(0, 0, virtualWidth, virtualHeight);
 
-                // Рисуем все фигуры на временном canvas
                 for (Shape shape : repository.getAllShapes()) {
                     shape.draw(imageGC);
                 }
 
-                // Получаем изображение из canvas
                 WritableImage writableImage = tempCanvas.snapshot(null, null);
 
                 String extension = getFileExtension(file);
@@ -157,9 +152,6 @@ public class HelloController {
                 return true;
             } catch (IOException e) {
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                errorAlert.setTitle("Ошибка сохранения");
-                errorAlert.setHeaderText("Не удалось сохранить изображение");
-                errorAlert.setContentText("Произошла ошибка при сохранении файла: " + e.getMessage());
                 errorAlert.showAndWait();
                 return false;
             }
@@ -217,13 +209,8 @@ public class HelloController {
                 if (hasOutline) {
                     selectedShape.setStrokeColor(outlineColor);
                     drawingCanvas.redrawAllShapes();
-                    welcomeText.setText("Цвет контура выделенной фигуры изменен");
                     markUnsavedChanges();
-                } else {
-                    welcomeText.setText("Контур отключен. Включите контур для изменения цвета.");
                 }
-            } else {
-                welcomeText.setText("Цвет контура установлен для новых фигур");
             }
         });
 
@@ -235,13 +222,8 @@ public class HelloController {
                 if (hasFill) {
                     selectedShape.setFillColor(fillColor);
                     drawingCanvas.redrawAllShapes();
-                    welcomeText.setText("Цвет заливки выделенной фигуры изменен");
                     markUnsavedChanges();
-                } else {
-                    welcomeText.setText("Заливка отключена. Включите заливку для изменения цвета.");
                 }
-            } else {
-                welcomeText.setText("Цвет заливки установлен для новых фигур");
             }
         });
     }
@@ -571,31 +553,26 @@ public class HelloController {
 
     @FXML
     protected void onSelectButtonClick() {
-        welcomeText.setText("Инструмент: Выделение");
         currentTool = "select";
     }
 
     @FXML
     protected void onRectangleButtonClick() {
-        welcomeText.setText("Инструмент: Прямоугольник");
         currentTool = "rectangle";
     }
 
     @FXML
     protected void onEllipseButtonClick() {
-        welcomeText.setText("Инструмент: Эллипс");
         currentTool = "ellipse";
     }
 
     @FXML
     protected void onLineButtonClick() {
-        welcomeText.setText("Инструмент: Линия");
         currentTool = "line";
     }
 
     @FXML
     protected void onTriangleButtonClick() {
-        welcomeText.setText("Инструмент: Треугольник");
         currentTool = "triangle";
     }
 
@@ -605,7 +582,6 @@ public class HelloController {
         if (selectedShape != null) {
             repository.saveState();
             drawingCanvas.deleteSelectedShape();
-            welcomeText.setText("Фигура удалена");
             markUnsavedChanges();
         } else {
             welcomeText.setText("Нет выделенной фигуры для удаления");

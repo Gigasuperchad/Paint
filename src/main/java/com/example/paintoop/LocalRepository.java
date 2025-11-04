@@ -1,8 +1,5 @@
 package com.example.paintoop;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
