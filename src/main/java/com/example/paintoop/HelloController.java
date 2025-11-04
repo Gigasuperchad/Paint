@@ -3,6 +3,7 @@ package com.example.paintoop;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -122,14 +123,31 @@ public class HelloController {
 
         if (file != null) {
             try {
-                WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
-                canvas.snapshot(null, writableImage);
+                // Создаем временный canvas для рисования
+                double virtualWidth = drawingCanvas.getVirtualWidth();
+                double virtualHeight = drawingCanvas.getVirtualHeight();
+
+                Canvas tempCanvas = new Canvas(virtualWidth, virtualHeight);
+                GraphicsContext imageGC = tempCanvas.getGraphicsContext2D();
+
+                // Заливаем белым фоном
+                imageGC.setFill(Color.WHITE);
+                imageGC.fillRect(0, 0, virtualWidth, virtualHeight);
+
+                // Рисуем все фигуры на временном canvas
+                for (Shape shape : repository.getAllShapes()) {
+                    shape.draw(imageGC);
+                }
+
+                // Получаем изображение из canvas
+                WritableImage writableImage = tempCanvas.snapshot(null, null);
 
                 String extension = getFileExtension(file);
                 if (extension == null) {
                     extension = ".png";
                     file = new File(file.getAbsolutePath() + extension);
                 }
+
                 BufferedImage bufferedImage = convertToBufferedImage(writableImage);
                 String format = extension.equals(".jpg") || extension.equals(".jpeg") ? "JPEG" : "PNG";
 
@@ -480,13 +498,10 @@ public class HelloController {
                 double modelEndX = drawingCanvas.toModelX(endX);
                 double modelEndY = drawingCanvas.toModelY(endY);
 
-                double distance = Math.sqrt(Math.pow(modelEndX - modelStartX, 2) + Math.pow(modelEndY - modelStartY, 2));
-                if (distance > 5 / drawingCanvas.getScale()) {
-                    Shape finalShape = createLineFinal(modelStartX, modelStartY, modelEndX, modelEndY);
-                    if (finalShape != null) {
-                        drawingCanvas.addShape(finalShape);
-                        markUnsavedChanges();
-                    }
+                Shape finalShape = createLineFinal(modelStartX, modelStartY, modelEndX, modelEndY);
+                if (finalShape != null) {
+                    drawingCanvas.addShape(finalShape);
+                    markUnsavedChanges();
                 }
             } else {
                 double modelX1 = drawingCanvas.toModelX(startX);
@@ -499,12 +514,10 @@ public class HelloController {
                 double width = Math.abs(modelX2 - modelX1);
                 double height = Math.abs(modelY2 - modelY1);
 
-                if (width > 5 / drawingCanvas.getScale() && height > 5 / drawingCanvas.getScale()) {
-                    Shape finalShape = createShapeFinal(x, y, width, height);
-                    if (finalShape != null) {
-                        drawingCanvas.addShape(finalShape);
-                        markUnsavedChanges();
-                    }
+                Shape finalShape = createShapeFinal(x, y, width, height);
+                if (finalShape != null) {
+                    drawingCanvas.addShape(finalShape);
+                    markUnsavedChanges();
                 }
             }
         }
@@ -603,7 +616,7 @@ public class HelloController {
     protected void onClearButtonClick() {
         repository.saveState();
         repository.clear();
-        drawingCanvas.clearCanvas();
+        drawingCanvas.redrawAllShapes();
         welcomeText.setText("Холст очищен");
         markUnsavedChanges();
     }
