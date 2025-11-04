@@ -237,7 +237,6 @@ class Ellipse extends Shape {
         return copy;
     }
 
-    // НОВЫЕ МЕТОДЫ ДЛЯ ИЗМЕНЕНИЯ ЦВЕТОВ
     @Override
     public void setStrokeColor(Color color) {
         this.strokeColor = color;
@@ -296,7 +295,6 @@ class Line extends Shape {
 
     @Override
     public void setFillColor(Color color) {
-        // У линии нет заливки, поэтому метод пустой
     }
 
     @Override
@@ -315,13 +313,10 @@ class Line extends Shape {
         double lineLength = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
         if (lineLength == 0) return false;
 
-        double distance = Math.abs(
-                (endY - startY) * pointX - (endX - startX) * pointY + endX * startY - endY * startX
-        ) / lineLength;
+        double distance = Math.abs((endY - startY) * pointX - (endX - startX) * pointY + endX * startY - endY * startX) / lineLength;
 
         if (distance <= 5) {
-            double dotProduct = ((pointX - startX) * (endX - startX) + (pointY - startY) * (endY - startY))
-                    / (lineLength * lineLength);
+            double dotProduct = ((pointX - startX) * (endX - startX) + (pointY - startY) * (endY - startY)) / (lineLength * lineLength);
             return dotProduct >= 0 && dotProduct <= 1;
         }
         return false;
@@ -393,11 +388,6 @@ class Line extends Shape {
         updateBoundingBox();
     }
 
-    public Color getStrokeColor() { return strokeColor; }
-    public double getStartX() { return startX; }
-    public double getStartY() { return startY; }
-    public double getEndX() { return endX; }
-    public double getEndY() { return endY; }
 }
 
 class Triangle extends Shape {

@@ -14,9 +14,10 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
 
         HelloController controller = fxmlLoader.getController();
+        controller.setPrimaryStage(stage);
         controller.setupAfterSceneReady();
 
-        stage.setTitle("Hello!");
+        stage.setTitle("PaintOOP");
         stage.setScene(scene);
         stage.show();
     }

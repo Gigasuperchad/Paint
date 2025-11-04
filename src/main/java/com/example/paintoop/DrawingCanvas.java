@@ -74,9 +74,6 @@ public class DrawingCanvas {
         }
     }
 
-    public double toViewX(double modelX) {
-        return modelX * scale + translateX;
-    }
 
     public double toViewY(double modelY) {
         return modelY * scale + translateY;
@@ -196,31 +193,5 @@ public class DrawingCanvas {
 
     public double getScale() {
         return scale;
-    }
-
-    public void setScale(double scale) {
-        this.scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale));
-        applyPanBoundaries();
-        redrawAllShapes();
-    }
-
-    public double getTranslateX() {
-        return translateX;
-    }
-
-    public void setTranslateX(double translateX) {
-        this.translateX = translateX;
-        applyPanBoundaries();
-        redrawAllShapes();
-    }
-
-    public double getTranslateY() {
-        return translateY;
-    }
-
-    public void setTranslateY(double translateY) {
-        this.translateY = translateY;
-        applyPanBoundaries();
-        redrawAllShapes();
     }
 }

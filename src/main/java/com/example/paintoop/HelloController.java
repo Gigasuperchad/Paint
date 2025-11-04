@@ -4,13 +4,25 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import javafx.stage.FileChooser;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
 
 public class HelloController {
     @FXML
@@ -49,6 +61,126 @@ public class HelloController {
     private Color fillColor = Color.BLUE;
     private double panStartX, panStartY;
 
+    private Stage primaryStage;
+    private boolean hasUnsavedChanges = false;
+
+    public void setPrimaryStage(Stage stage) {
+        this.primaryStage = stage;
+        setupCloseHandler();
+    }
+
+    private void setupCloseHandler() {
+        if (primaryStage != null) {
+            primaryStage.setOnCloseRequest(this::handleCloseRequest);
+        }
+    }
+
+    private void handleCloseRequest(WindowEvent event) {
+        if (hasUnsavedChanges) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Сохранение");
+            alert.setHeaderText("У вас есть несохраненные изменения");
+            alert.setContentText("Вы хотите сохранить перед выходом?");
+
+            ButtonType saveButton = new ButtonType("Сохранить");
+            ButtonType dontSaveButton = new ButtonType("Не сохранять");
+            ButtonType cancelButton = new ButtonType("Отмена");
+
+            alert.getButtonTypes().setAll(saveButton, dontSaveButton, cancelButton);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent()) {
+                if (result.get() == saveButton) {
+                    if (saveToFile()) {
+                        hasUnsavedChanges = false;
+                        return;
+                    } else {
+                        event.consume();
+                    }
+                } else if (result.get() == dontSaveButton) {
+                    return;
+                } else {
+                    event.consume();
+                }
+            } else {
+                event.consume();
+            }
+        }
+    }
+
+    private boolean saveToFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Сохранить изображение");
+
+        FileChooser.ExtensionFilter pngFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
+        FileChooser.ExtensionFilter jpgFilter = new FileChooser.ExtensionFilter("JPEG files (*.jpg)", "*.jpg");
+
+        fileChooser.getExtensionFilters().addAll(pngFilter, jpgFilter);
+        fileChooser.setSelectedExtensionFilter(pngFilter);
+
+        File file = fileChooser.showSaveDialog(primaryStage);
+
+        if (file != null) {
+            try {
+                WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
+                canvas.snapshot(null, writableImage);
+
+                String extension = getFileExtension(file);
+                if (extension == null) {
+                    extension = ".png";
+                    file = new File(file.getAbsolutePath() + extension);
+                }
+                BufferedImage bufferedImage = convertToBufferedImage(writableImage);
+                String format = extension.equals(".jpg") || extension.equals(".jpeg") ? "JPEG" : "PNG";
+
+                ImageIO.write(bufferedImage, format, file);
+
+                welcomeText.setText("Изображение сохранено: " + file.getName());
+                return true;
+            } catch (IOException e) {
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setTitle("Ошибка сохранения");
+                errorAlert.setHeaderText("Не удалось сохранить изображение");
+                errorAlert.setContentText("Произошла ошибка при сохранении файла: " + e.getMessage());
+                errorAlert.showAndWait();
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private BufferedImage convertToBufferedImage(WritableImage writableImage) {
+        int width = (int) writableImage.getWidth();
+        int height = (int) writableImage.getHeight();
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Color color = writableImage.getPixelReader().getColor(x, y);
+                int argb = (int) (color.getOpacity() * 255) << 24 |
+                        (int) (color.getRed() * 255) << 16 |
+                        (int) (color.getGreen() * 255) << 8 |
+                        (int) (color.getBlue() * 255);
+                bufferedImage.setRGB(x, y, argb);
+            }
+        }
+
+        return bufferedImage;
+    }
+
+    private String getFileExtension(File file) {
+        String name = file.getName();
+        int lastIndexOf = name.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return null;
+        }
+        return name.substring(lastIndexOf);
+    }
+
+    private void markUnsavedChanges() {
+        this.hasUnsavedChanges = true;
+    }
+
     @FXML
     public void initialize() {
         drawingCanvas = new DrawingCanvas(canvas, repository);
@@ -68,6 +200,7 @@ public class HelloController {
                     selectedShape.setStrokeColor(outlineColor);
                     drawingCanvas.redrawAllShapes();
                     welcomeText.setText("Цвет контура выделенной фигуры изменен");
+                    markUnsavedChanges();
                 } else {
                     welcomeText.setText("Контур отключен. Включите контур для изменения цвета.");
                 }
@@ -85,6 +218,7 @@ public class HelloController {
                     selectedShape.setFillColor(fillColor);
                     drawingCanvas.redrawAllShapes();
                     welcomeText.setText("Цвет заливки выделенной фигуры изменен");
+                    markUnsavedChanges();
                 } else {
                     welcomeText.setText("Заливка отключена. Включите заливку для изменения цвета.");
                 }
@@ -140,12 +274,16 @@ public class HelloController {
                     break;
                 case O:
                     drawingCanvas.pan(30, 0);
-                    welcomeText.setText("Перемещение влево");
                     event.consume();
                     break;
                 case P:
                     drawingCanvas.pan(-30, 0);
-                    welcomeText.setText("Перемещение вправо");
+                    event.consume();
+                    break;
+                case S:
+                    if (saveToFile()) {
+                        hasUnsavedChanges = false;
+                    }
                     event.consume();
                     break;
             }
@@ -153,22 +291,18 @@ public class HelloController {
             switch (event.getCode()) {
                 case UP:
                     drawingCanvas.pan(0, 30);
-                    welcomeText.setText("Перемещение вверх");
                     event.consume();
                     break;
                 case DOWN:
                     drawingCanvas.pan(0, -30);
-                    welcomeText.setText("Перемещение вниз");
                     event.consume();
                     break;
                 case LEFT:
                     drawingCanvas.pan(30, 0);
-                    welcomeText.setText("Перемещение влево");
                     event.consume();
                     break;
                 case RIGHT:
                     drawingCanvas.pan(-30, 0);
-                    welcomeText.setText("Перемещение вправо");
                     event.consume();
                     break;
             }
@@ -181,7 +315,7 @@ public class HelloController {
         if (drawingCanvas.getSelectedShape() != null) {
             drawingCanvas.getSelectedShape().setSelected(false);
         }
-        welcomeText.setText("Отмена действия");
+        markUnsavedChanges();
     }
 
     private void setupMouseHandlers() {
@@ -294,7 +428,6 @@ public class HelloController {
             drawingCanvas.pan(panDeltaX, panDeltaY);
             panStartX = currentX;
             panStartY = currentY;
-            welcomeText.setText("Перемещение холста");
         } else if (isMoving && currentTool.equals("select")) {
             double modelDeltaX = deltaX / drawingCanvas.getScale();
             double modelDeltaY = deltaY / drawingCanvas.getScale();
@@ -352,6 +485,7 @@ public class HelloController {
                     Shape finalShape = createLineFinal(modelStartX, modelStartY, modelEndX, modelEndY);
                     if (finalShape != null) {
                         drawingCanvas.addShape(finalShape);
+                        markUnsavedChanges();
                     }
                 }
             } else {
@@ -369,6 +503,7 @@ public class HelloController {
                     Shape finalShape = createShapeFinal(x, y, width, height);
                     if (finalShape != null) {
                         drawingCanvas.addShape(finalShape);
+                        markUnsavedChanges();
                     }
                 }
             }
@@ -458,6 +593,7 @@ public class HelloController {
             repository.saveState();
             drawingCanvas.deleteSelectedShape();
             welcomeText.setText("Фигура удалена");
+            markUnsavedChanges();
         } else {
             welcomeText.setText("Нет выделенной фигуры для удаления");
         }
@@ -469,6 +605,7 @@ public class HelloController {
         repository.clear();
         drawingCanvas.clearCanvas();
         welcomeText.setText("Холст очищен");
+        markUnsavedChanges();
     }
 
     @FXML
@@ -497,11 +634,5 @@ public class HelloController {
         hasFill = true;
         updateFillButtons();
         welcomeText.setText("Заливка: сплошная");
-    }
-
-    @FXML
-    protected void onResetViewButtonClick() {
-        drawingCanvas.resetView();
-        welcomeText.setText("Вид сброшен к масштабу 100%");
     }
 }
