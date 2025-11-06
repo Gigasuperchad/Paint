@@ -5,46 +5,56 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" spacing="15.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.12" fx:controller="com.example.paintoop.HelloController">
+<VBox alignment="TOP_CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.paintoop.HelloController">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
     </padding>
 
-    <Label fx:id="welcomeText" text="Выберите инструмент" />
+    <!-- Заголовок -->
+    <Label fx:id="welcomeText" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="PaintOOP - Графический редактор">
+        <padding>
+            <Insets bottom="5.0" />
+        </padding>
+    </Label>
 
-    <HBox prefHeight="50.0" prefWidth="200.0" spacing="10">
-        <children>
-            <Button onAction="#onSelectButtonClick" text="Выделение" />
-            <Button onAction="#onRectangleButtonClick" text="Прямоугольник" />
-            <Button onAction="#onEllipseButtonClick" text="Эллипс" />
-            <Button onAction="#onLineButtonClick" text="Линия" />
-            <Button onAction="#onTriangleButtonClick" text="Треугольник" />
-            <Button onAction="#onDeleteButtonClick" text="Удалить" />
-            <Button onAction="#onClearButtonClick" text="Очистить" />
-        </children>
-    </HBox>
+    <HBox alignment="TOP_LEFT" spacing="15">
+        <!-- Левая панель с инструментами -->
+        <VBox spacing="10" style="-fx-background-color: #ecf0f1; -fx-padding: 10; -fx-background-radius: 5; -fx-min-width: 200;">
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #34495e;" text="Инструменты:" />
 
-    <HBox prefHeight="40.0" prefWidth="200.0" spacing="10" alignment="CENTER_LEFT">
-        <children>
-            <Label text="Контур:" />
-            <Button fx:id="outlineNoneButton" onAction="#onOutlineNoneClick" text="Нет" />
-            <Button fx:id="outlineSolidButton" onAction="#onOutlineSolidClick" text="Сплошной" />
-            <ColorPicker fx:id="outlineColorPicker" />
-        </children>
-    </HBox>
+            <ListView fx:id="toolsListView" prefHeight="120" style="-fx-border-color: #bdc3c7; -fx-border-radius: 3;">
+            </ListView>
 
-    <HBox prefHeight="40.0" prefWidth="200.0" spacing="10" alignment="CENTER_LEFT">
-        <children>
-            <Label text="Заливка:" />
-            <Button fx:id="fillNoneButton" onAction="#onFillNoneClick" text="Нет" />
-            <Button fx:id="fillSolidButton" onAction="#onFillSolidClick" text="Сплошная" />
-            <ColorPicker fx:id="fillColorPicker" />
-        </children>
-    </HBox>
+            <!-- Кнопка выделения -->
+            <Button onAction="#onSelectToolClick" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;" text="Выделение" />
 
-    <HBox prefHeight="400.0" prefWidth="600.0">
-        <children>
-            <Canvas fx:id="canvas" height="400.0" width="600.0" />
-        </children>
+            <VBox spacing="5">
+                <Label style="-fx-font-weight: bold; -fx-text-fill: #34495e;" text="Действия:" />
+                <HBox spacing="5">
+                    <Button onAction="#onDeleteButtonClick" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 80;" text="Удалить" />
+                    <Button onAction="#onClearButtonClick" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 80;" text="Очистить" />
+                </HBox>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label style="-fx-font-weight: bold; -fx-text-fill: #34495e;" text="Стиль контура:" />
+                <HBox spacing="5">
+                    <Button fx:id="outlineNoneButton" onAction="#onOutlineNoneClick" style="-fx-background-radius: 3; -fx-min-width: 60;" text="Нет" />
+                    <Button fx:id="outlineSolidButton" onAction="#onOutlineSolidClick" style="-fx-background-radius: 3; -fx-min-width: 60;" text="Сплошной" />
+                </HBox>
+                <ColorPicker fx:id="outlineColorPicker" style="-fx-color-label-visible: false;" />
+
+                <Label style="-fx-font-weight: bold; -fx-text-fill: #34495e; -fx-padding: 5 0 0 0;" text="Стиль заливки:" />
+                <HBox spacing="5">
+                    <Button fx:id="fillNoneButton" onAction="#onFillNoneClick" style="-fx-background-radius: 3; -fx-min-width: 60;" text="Нет" />
+                    <Button fx:id="fillSolidButton" onAction="#onFillSolidClick" style="-fx-background-radius: 3; -fx-min-width: 60;" text="Сплошная" />
+                </HBox>
+                <ColorPicker fx:id="fillColorPicker" style="-fx-color-label-visible: false;" />
+            </VBox>
+        </VBox>
+
+        <VBox prefHeight="369.0" prefWidth="546.0" spacing="5" style="-fx-border-color: #bdc3c7; -fx-border-width: 1; -fx-border-radius: 3; -fx-padding: 5;">
+            <Canvas fx:id="canvas" height="400.0" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);" width="600.0" />
+        </VBox>
     </HBox>
 </VBox>

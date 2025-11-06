@@ -9,6 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -29,7 +30,13 @@ public class HelloController {
     private Label welcomeText;
 
     @FXML
+    private Label statusText;
+
+    @FXML
     private Canvas canvas;
+
+    @FXML
+    private ListView<String> toolsListView;
 
     @FXML
     private Button outlineNoneButton;
@@ -148,10 +155,12 @@ public class HelloController {
 
                 ImageIO.write(bufferedImage, format, file);
 
-                welcomeText.setText("Изображение сохранено: " + file.getName());
                 return true;
             } catch (IOException e) {
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setTitle("Ошибка сохранения");
+                errorAlert.setHeaderText("Не удалось сохранить изображение");
+                errorAlert.setContentText("Произошла ошибка при сохранении файла: " + e.getMessage());
                 errorAlert.showAndWait();
                 return false;
             }
@@ -197,6 +206,7 @@ public class HelloController {
         setupMouseHandlers();
         setupStyleButtons();
         setupZoomHandlers();
+        setupToolsListView();
 
         outlineColorPicker.setValue(outlineColor);
         fillColorPicker.setValue(fillColor);
@@ -209,8 +219,13 @@ public class HelloController {
                 if (hasOutline) {
                     selectedShape.setStrokeColor(outlineColor);
                     drawingCanvas.redrawAllShapes();
+                    welcomeText.setText("Цвет контура выделенной фигуры изменен");
                     markUnsavedChanges();
+                } else {
+                    welcomeText.setText("Контур отключен. Включите контур для изменения цвета.");
                 }
+            } else {
+                welcomeText.setText("Цвет контура установлен для новых фигур");
             }
         });
 
@@ -222,10 +237,58 @@ public class HelloController {
                 if (hasFill) {
                     selectedShape.setFillColor(fillColor);
                     drawingCanvas.redrawAllShapes();
+                    welcomeText.setText("Цвет заливки выделенной фигуры изменен");
                     markUnsavedChanges();
+                } else {
+                    welcomeText.setText("Заливка отключена. Включите заливку для изменения цвета.");
+                }
+            } else {
+                welcomeText.setText("Цвет заливки установлен для новых фигур");
+            }
+        });
+
+    }
+
+    private void setupToolsListView() {
+        toolsListView.getItems().addAll(
+                "Прямоугольник",
+                "Эллипс",
+                "Линия",
+                "Треугольник"
+        );
+
+        toolsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (newValue) {
+                    case "Прямоугольник":
+                        currentTool = "rectangle";
+                        welcomeText.setText("Инструмент: Прямоугольник");
+                        break;
+                    case "Эллипс":
+                        currentTool = "ellipse";
+                        welcomeText.setText("Инструмент: Эллипс");
+                        break;
+                    case "Линия":
+                        currentTool = "line";
+                        welcomeText.setText("Инструмент: Линия");
+                        break;
+                    case "Треугольник":
+                        currentTool = "triangle";
+                        welcomeText.setText("Инструмент: Треугольник");
+                        break;
                 }
             }
         });
+
+        toolsListView.getSelectionModel().select(0);
+    }
+
+    @FXML
+    protected void onSelectToolClick() {
+        currentTool = "select";
+        welcomeText.setText("Инструмент: Выделение");
+
+        toolsListView.getSelectionModel().clearSelection();
     }
 
     public void setupAfterSceneReady() {
@@ -303,6 +366,10 @@ public class HelloController {
                     break;
                 case RIGHT:
                     drawingCanvas.pan(-30, 0);
+                    event.consume();
+                    break;
+                case DELETE:
+                    onDeleteButtonClick();
                     event.consume();
                     break;
             }
@@ -515,6 +582,11 @@ public class HelloController {
     }
 
     private Shape createLineFinal(double startX, double startY, double endX, double endY) {
+        double distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+        if (distance < 5) {
+            return null;
+        }
+
         Color strokeColor = hasOutline ? outlineColor : Color.TRANSPARENT;
         return new Line(startX, startY, endX, endY, strokeColor);
     }
@@ -536,6 +608,10 @@ public class HelloController {
     }
 
     private Shape createShapeFinal(double x, double y, double width, double height) {
+        if (width < 5 || height < 5) {
+            return null;
+        }
+
         Color strokeColor = hasOutline ? outlineColor : Color.TRANSPARENT;
         Color fillColor = hasFill ? this.fillColor : Color.TRANSPARENT;
 
@@ -552,36 +628,15 @@ public class HelloController {
     }
 
     @FXML
-    protected void onSelectButtonClick() {
-        currentTool = "select";
-    }
-
-    @FXML
-    protected void onRectangleButtonClick() {
-        currentTool = "rectangle";
-    }
-
-    @FXML
-    protected void onEllipseButtonClick() {
-        currentTool = "ellipse";
-    }
-
-    @FXML
-    protected void onLineButtonClick() {
-        currentTool = "line";
-    }
-
-    @FXML
-    protected void onTriangleButtonClick() {
-        currentTool = "triangle";
-    }
-
-    @FXML
     protected void onDeleteButtonClick() {
         Shape selectedShape = drawingCanvas.getSelectedShape();
         if (selectedShape != null) {
             repository.saveState();
             drawingCanvas.deleteSelectedShape();
+            welcomeText.setText("Фигура удалена");
+            if (statusText != null) {
+                statusText.setText("Фигура удалена");
+            }
             markUnsavedChanges();
         } else {
             welcomeText.setText("Нет выделенной фигуры для удаления");
@@ -594,6 +649,9 @@ public class HelloController {
         repository.clear();
         drawingCanvas.redrawAllShapes();
         welcomeText.setText("Холст очищен");
+        if (statusText != null) {
+            statusText.setText("Холст очищен");
+        }
         markUnsavedChanges();
     }
 

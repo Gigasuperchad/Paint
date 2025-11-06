@@ -29,10 +29,7 @@ public class DrawingCanvas {
     }
 
     public void zoom(double delta, double pivotX, double pivotY) {
-        double oldScale = scale;
         scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale + delta));
-
-        double scaleFactor = scale / oldScale;
 
         double modelX = toModelX(pivotX);
         double modelY = toModelY(pivotY);
@@ -85,14 +82,6 @@ public class DrawingCanvas {
         } else {
             translateY = Math.max(canvasHeight - scaledVirtualHeight, Math.min(0, translateY));
         }
-    }
-
-    public double toViewX(double modelX) {
-        return modelX * scale + translateX;
-    }
-
-    public double toViewY(double modelY) {
-        return modelY * scale + translateY;
     }
 
     public double toModelX(double viewX) {
