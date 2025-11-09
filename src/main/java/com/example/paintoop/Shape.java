@@ -2,6 +2,7 @@ package com.example.paintoop;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 
 public abstract class Shape {
     protected double x;
@@ -390,11 +391,12 @@ class Line extends Shape {
 
 }
 
-class Triangle extends Shape {
+class CustomPolygon extends Shape {
     private Color strokeColor;
     private Color fillColor;
+    private int sides = 6;
 
-    public Triangle(double x, double y, double width, double height, Color strokeColor, Color fillColor) {
+    public CustomPolygon(double x, double y, double width, double height, Color strokeColor, Color fillColor) {
         super(x, y, width, height);
         this.strokeColor = strokeColor;
         this.fillColor = fillColor;
@@ -402,7 +404,7 @@ class Triangle extends Shape {
 
     @Override
     public Shape copy() {
-        Triangle copy = new Triangle(x, y, width, height, strokeColor, fillColor);
+        CustomPolygon copy = new CustomPolygon(x, y, width, height, strokeColor, fillColor);
         copy.setSelected(this.isSelected);
         return copy;
     }
@@ -419,18 +421,28 @@ class Triangle extends Shape {
 
     @Override
     public void draw(GraphicsContext gc) {
-        double[] xPoints = {x + width / 2, x, x + width};
-        double[] yPoints = {y, y + height, y + height};
+        double centerX = x + width / 2;
+        double centerY = y + height / 2;
+        double radius = Math.min(width, height) / 2;
+
+        double[] xPoints = new double[sides];
+        double[] yPoints = new double[sides];
+
+        for (int i = 0; i < sides; i++) {
+            double angle = 2 * Math.PI * i / sides;
+            xPoints[i] = centerX + radius * Math.cos(angle);
+            yPoints[i] = centerY + radius * Math.sin(angle);
+        }
 
         if (fillColor != null && !fillColor.equals(Color.TRANSPARENT)) {
             gc.setFill(fillColor);
-            gc.fillPolygon(xPoints, yPoints, 3);
+            gc.fillPolygon(xPoints, yPoints, sides);
         }
 
         if (strokeColor != null && !strokeColor.equals(Color.TRANSPARENT)) {
             gc.setStroke(strokeColor);
             gc.setLineWidth(2);
-            gc.strokePolygon(xPoints, yPoints, 3);
+            gc.strokePolygon(xPoints, yPoints, sides);
         }
 
         drawSelection(gc);

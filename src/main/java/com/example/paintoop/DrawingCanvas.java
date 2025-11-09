@@ -219,7 +219,6 @@ public class DrawingCanvas {
             double oldY = selectedShape.getY();
             double oldWidth = selectedShape.getWidth();
             double oldHeight = selectedShape.getHeight();
-
             selectedShape.resize(resizeType, newX, newY);
 
             if (!isShapePositionValid(selectedShape.getX(), selectedShape.getY(),

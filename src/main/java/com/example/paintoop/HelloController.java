@@ -254,7 +254,7 @@ public class HelloController {
                 "Прямоугольник",
                 "Эллипс",
                 "Линия",
-                "Треугольник"
+                "Многоугольник"
         );
 
         toolsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -272,9 +272,9 @@ public class HelloController {
                         currentTool = "line";
                         welcomeText.setText("Инструмент: Линия");
                         break;
-                    case "Треугольник":
-                        currentTool = "triangle";
-                        welcomeText.setText("Инструмент: Треугольник");
+                    case "Многоугольник":
+                        currentTool = "polygon";
+                        welcomeText.setText("Инструмент: Многоугольник");
                         break;
                 }
             }
@@ -600,8 +600,8 @@ public class HelloController {
                 return new Rectangle(x, y, width, height, strokeColor, fillColor);
             case "ellipse":
                 return new Ellipse(x, y, width, height, strokeColor, fillColor);
-            case "triangle":
-                return new Triangle(x, y, width, height, strokeColor, fillColor);
+            case "polygon":
+                return new CustomPolygon(x, y, width, height, strokeColor, fillColor);
             default:
                 return null;
         }
@@ -620,8 +620,8 @@ public class HelloController {
                 return new Rectangle(x, y, width, height, strokeColor, fillColor);
             case "ellipse":
                 return new Ellipse(x, y, width, height, strokeColor, fillColor);
-            case "triangle":
-                return new Triangle(x, y, width, height, strokeColor, fillColor);
+            case "polygon":
+                return new CustomPolygon(x, y, width, height, strokeColor, fillColor);
             default:
                 return null;
         }
