@@ -16,15 +16,14 @@ public class DrawingCanvas {
     private double translateY = 0;
     private static final double MIN_SCALE = 0.1;
     private static final double MAX_SCALE = 5.0;
-    private double virtualWidth = 1600;
-    private double virtualHeight = 1200;
+    private double virtualWidth = 2000;
+    private double virtualHeight = 1500;
 
     public DrawingCanvas(Canvas canvas, Repository repository) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
         this.repository = repository;
         clearCanvas();
-
         centerView();
     }
 

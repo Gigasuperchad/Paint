@@ -2,7 +2,6 @@ package com.example.paintoop;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 
 public abstract class Shape {
     protected double x;
@@ -391,12 +390,12 @@ class Line extends Shape {
 
 }
 
-class CustomPolygon extends Shape {
+class Polygon extends Shape {
     private Color strokeColor;
     private Color fillColor;
     private int sides = 6;
 
-    public CustomPolygon(double x, double y, double width, double height, Color strokeColor, Color fillColor) {
+    public Polygon(double x, double y, double width, double height, Color strokeColor, Color fillColor) {
         super(x, y, width, height);
         this.strokeColor = strokeColor;
         this.fillColor = fillColor;
@@ -404,7 +403,7 @@ class CustomPolygon extends Shape {
 
     @Override
     public Shape copy() {
-        CustomPolygon copy = new CustomPolygon(x, y, width, height, strokeColor, fillColor);
+        Polygon copy = new Polygon(x, y, width, height, strokeColor, fillColor);
         copy.setSelected(this.isSelected);
         return copy;
     }

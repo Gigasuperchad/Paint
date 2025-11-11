@@ -53,8 +53,8 @@
             </VBox>
         </VBox>
 
-        <VBox prefHeight="369.0" spacing="5" style="-fx-border-color: #bdc3c7; -fx-border-width: 1; -fx-border-radius: 3; -fx-padding: 5;">
-            <Canvas fx:id="canvas" height="400.0" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);" width="600.0" />
+        <VBox prefHeight="600.0" spacing="5" style="-fx-border-color: #bdc3c7; -fx-border-width: 1; -fx-border-radius: 3; -fx-padding: 5;">
+            <Canvas fx:id="canvas" height="600.0" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);" width="900.0" />
         </VBox>
     </HBox>
 </VBox>
