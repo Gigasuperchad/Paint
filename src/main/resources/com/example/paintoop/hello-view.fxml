@@ -10,7 +10,6 @@
         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
     </padding>
 
-    <!-- Заголовок -->
     <Label fx:id="welcomeText" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="PaintOOP - Графический редактор">
         <padding>
             <Insets bottom="5.0" />
@@ -18,14 +17,12 @@
     </Label>
 
     <HBox alignment="TOP_LEFT" spacing="15">
-        <!-- Левая панель с инструментами -->
         <VBox spacing="10" style="-fx-background-color: #ecf0f1; -fx-padding: 10; -fx-background-radius: 5; -fx-min-width: 200;">
             <Label style="-fx-font-weight: bold; -fx-text-fill: #34495e;" text="Инструменты:" />
 
             <ListView fx:id="toolsListView" prefHeight="120" style="-fx-border-color: #bdc3c7; -fx-border-radius: 3;">
             </ListView>
 
-            <!-- Кнопка выделения -->
             <Button onAction="#onSelectToolClick" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;" text="Выделение" />
 
             <VBox spacing="5">
