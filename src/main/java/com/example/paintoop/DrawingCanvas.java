@@ -107,13 +107,7 @@ public class DrawingCanvas {
         gc.fillRect(0, 0, virtualWidth, virtualHeight);
 
         for (Shape shape : repository.getAllShapes()) {
-            if (shape != selectedShape) {
-                shape.draw(gc);
-            }
-        }
-
-        if (selectedShape != null) {
-            selectedShape.draw(gc);
+            shape.draw(gc);
         }
 
         gc.restore();
@@ -134,11 +128,9 @@ public class DrawingCanvas {
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, virtualWidth, virtualHeight);
 
-
         for (Shape shape : repository.getAllShapes()) {
             shape.draw(gc);
         }
-
 
         previewShape.draw(gc);
 
@@ -179,19 +171,26 @@ public class DrawingCanvas {
         if (modelX < 0 || modelX > virtualWidth || modelY < 0 || modelY > virtualHeight) {
             return null;
         }
-
         for (Shape shape : repository.getAllShapes()) {
             shape.setSelected(false);
         }
 
+        Shape selected = null;
         for (int i = repository.getAllShapes().size() - 1; i >= 0; i--) {
             Shape shape = repository.getAllShapes().get(i);
             if (shape.contains(modelX, modelY)) {
-                shape.setSelected(true);
-                selectedShape = shape;
-                redrawAllShapes();
-                return shape;
+                selected = shape;
+                break;
             }
+        }
+
+        if (selected != null) {
+            selected.setSelected(true);
+            selectedShape = selected;
+            repository.bringToFront(selected);
+
+            redrawAllShapes();
+            return selected;
         }
 
         selectedShape = null;

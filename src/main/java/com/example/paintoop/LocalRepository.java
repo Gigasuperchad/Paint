@@ -1,6 +1,5 @@
 package com.example.paintoop;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.File;
@@ -14,7 +13,7 @@ public class LocalRepository implements Repository {
     private List<Shape> shapes = new ArrayList<>();
     private Deque<List<Shape>> history = new ArrayDeque<>();
     private static final int MAX_HISTORY_SIZE = 5;
-    private static final String HISTORY_FILE = "shapes_history.json";
+    private static final String HISTORY_FILE = "history.json";
     private ObjectMapper objectMapper;
 
     public LocalRepository() {
@@ -27,12 +26,14 @@ public class LocalRepository implements Repository {
     public void addShape(Shape shape) {
         saveState();
         shapes.add(shape);
+        saveHistoryToFile();
     }
 
     @Override
     public void removeShape(Shape shape) {
         saveState();
         shapes.remove(shape);
+        saveHistoryToFile();
     }
 
     @Override
@@ -44,6 +45,7 @@ public class LocalRepository implements Repository {
     public void clear() {
         saveState();
         shapes.clear();
+        saveHistoryToFile();
     }
 
     @Override
@@ -70,6 +72,16 @@ public class LocalRepository implements Repository {
         }
         saveHistoryToFile();
     }
+
+    @Override
+    public void bringToFront(Shape shape) {
+        if (shapes.contains(shape)) {
+            shapes.remove(shape);
+            shapes.add(shape);
+            saveState();
+        }
+    }
+
     public void clearPersistentData() {
         history.clear();
         shapes.clear();
@@ -78,6 +90,7 @@ public class LocalRepository implements Repository {
             file.delete();
         }
     }
+
     private void saveHistoryToFile() {
         try {
             RepositoryState repositoryState = new RepositoryState(new ArrayList<>(history), new ArrayList<>(shapes));
@@ -119,5 +132,4 @@ public class LocalRepository implements Repository {
             return currentShapes;
         }
     }
-
 }

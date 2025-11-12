@@ -28,23 +28,18 @@ import java.util.Optional;
 public class HelloController {
     @FXML
     private Label welcomeText;
-
     @FXML
     private Label statusText;
-
     @FXML
     private Canvas canvas;
-
     @FXML
     private ListView<String> toolsListView;
-
     @FXML
     private Button outlineNoneButton;
     @FXML
     private Button outlineSolidButton;
     @FXML
     private ColorPicker outlineColorPicker;
-
     @FXML
     private Button fillNoneButton;
     @FXML
@@ -105,7 +100,9 @@ public class HelloController {
                         event.consume();
                     }
                 } else if (result.get() == dontSaveButton) {
-                    repository.clearPersistentData();
+                    if (repository instanceof LocalRepository) {
+                        ((LocalRepository) repository).clearPersistentData();
+                    }
                     return;
                 } else {
                     event.consume();
@@ -158,11 +155,6 @@ public class HelloController {
 
                 return true;
             } catch (IOException e) {
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                errorAlert.setTitle("Ошибка сохранения");
-                errorAlert.setHeaderText("Не удалось сохранить изображение");
-                errorAlert.setContentText("Произошла ошибка при сохранении файла: " + e.getMessage());
-                errorAlert.showAndWait();
                 return false;
             }
         }
@@ -247,7 +239,6 @@ public class HelloController {
                 welcomeText.setText("Цвет заливки установлен для новых фигур");
             }
         });
-
     }
 
     private void setupToolsListView() {
@@ -288,7 +279,6 @@ public class HelloController {
     protected void onSelectToolClick() {
         currentTool = "select";
         welcomeText.setText("Инструмент: Выделение");
-
         toolsListView.getSelectionModel().clearSelection();
     }
 
@@ -481,6 +471,7 @@ public class HelloController {
             }
         } else {
             isDrawing = true;
+            drawingCanvas.selectShapeAt(-1, -1);
         }
     }
 
@@ -523,6 +514,7 @@ public class HelloController {
                 double y = Math.min(modelY1, modelY2);
                 double width = Math.abs(modelX2 - modelX1);
                 double height = Math.abs(modelY2 - modelY1);
+
                 previewShape = createShapePreview(x, y, width, height);
             }
 

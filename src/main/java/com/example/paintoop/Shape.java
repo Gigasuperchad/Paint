@@ -422,15 +422,16 @@ class Polygon extends Shape {
     public void draw(GraphicsContext gc) {
         double centerX = x + width / 2;
         double centerY = y + height / 2;
-        double radius = Math.min(width, height) / 2;
+        double radiusX = width / 2;
+        double radiusY = height / 2;
 
         double[] xPoints = new double[sides];
         double[] yPoints = new double[sides];
 
         for (int i = 0; i < sides; i++) {
             double angle = 2 * Math.PI * i / sides;
-            xPoints[i] = centerX + radius * Math.cos(angle);
-            yPoints[i] = centerY + radius * Math.sin(angle);
+            xPoints[i] = centerX + radiusX * Math.cos(angle);
+            yPoints[i] = centerY + radiusY * Math.sin(angle);
         }
 
         if (fillColor != null && !fillColor.equals(Color.TRANSPARENT)) {
@@ -445,5 +446,11 @@ class Polygon extends Shape {
         }
 
         drawSelection(gc);
+    }
+
+    @Override
+    public boolean contains(double pointX, double pointY) {
+        return pointX >= x && pointX <= x + width &&
+                pointY >= y && pointY <= y + height;
     }
 }

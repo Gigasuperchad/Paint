@@ -10,4 +10,5 @@ public interface Repository {
     void undo();
     void saveState();
     void clearPersistentData();
+    void bringToFront(Shape shape);
 }
