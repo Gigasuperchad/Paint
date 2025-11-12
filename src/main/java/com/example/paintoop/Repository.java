@@ -9,4 +9,5 @@ public interface Repository {
     void clear();
     void undo();
     void saveState();
+    void clearPersistentData();
 }

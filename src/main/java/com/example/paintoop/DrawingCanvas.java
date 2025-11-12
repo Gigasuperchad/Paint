@@ -107,7 +107,13 @@ public class DrawingCanvas {
         gc.fillRect(0, 0, virtualWidth, virtualHeight);
 
         for (Shape shape : repository.getAllShapes()) {
-            shape.draw(gc);
+            if (shape != selectedShape) {
+                shape.draw(gc);
+            }
+        }
+
+        if (selectedShape != null) {
+            selectedShape.draw(gc);
         }
 
         gc.restore();
@@ -128,9 +134,12 @@ public class DrawingCanvas {
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, virtualWidth, virtualHeight);
 
+
         for (Shape shape : repository.getAllShapes()) {
             shape.draw(gc);
         }
+
+
         previewShape.draw(gc);
 
         gc.restore();

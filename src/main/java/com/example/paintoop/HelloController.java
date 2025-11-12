@@ -105,6 +105,7 @@ public class HelloController {
                         event.consume();
                     }
                 } else if (result.get() == dontSaveButton) {
+                    repository.clearPersistentData();
                     return;
                 } else {
                     event.consume();
