@@ -119,8 +119,9 @@ public class HelloController {
 
         FileChooser.ExtensionFilter pngFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
         FileChooser.ExtensionFilter jpgFilter = new FileChooser.ExtensionFilter("JPEG files (*.jpg)", "*.jpg");
+        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json");
 
-        fileChooser.getExtensionFilters().addAll(pngFilter, jpgFilter);
+        fileChooser.getExtensionFilters().addAll(pngFilter,jpgFilter,jsonFilter);
         fileChooser.setSelectedExtensionFilter(pngFilter);
 
         File file = fileChooser.showSaveDialog(primaryStage);
@@ -169,10 +170,7 @@ public class HelloController {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Color color = writableImage.getPixelReader().getColor(x, y);
-                int argb = (int) (color.getOpacity() * 255) << 24 |
-                        (int) (color.getRed() * 255) << 16 |
-                        (int) (color.getGreen() * 255) << 8 |
-                        (int) (color.getBlue() * 255);
+                int argb = (int) (color.getOpacity() * 255) << 24 | (int) (color.getRed() * 255) << 16 | (int) (color.getGreen() * 255) << 8 | (int) (color.getBlue() * 255);
                 bufferedImage.setRGB(x, y, argb);
             }
         }

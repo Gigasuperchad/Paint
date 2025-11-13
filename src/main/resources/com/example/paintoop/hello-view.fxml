@@ -15,7 +15,6 @@
             <Insets bottom="5.0" />
         </padding>
     </Label>
-
     <HBox alignment="TOP_LEFT" spacing="15">
         <VBox spacing="10" style="-fx-background-color: #ecf0f1; -fx-padding: 10; -fx-background-radius: 5; -fx-min-width: 200;">
             <Label style="-fx-font-weight: bold; -fx-text-fill: #34495e;" text="Инструменты:" />
@@ -32,7 +31,6 @@
                     <Button onAction="#onClearButtonClick" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 80;" text="Очистить" />
                 </HBox>
             </VBox>
-
             <VBox spacing="8">
                 <Label style="-fx-font-weight: bold; -fx-text-fill: #34495e;" text="Стиль контура:" />
                 <HBox spacing="5">
@@ -49,7 +47,6 @@
                 <ColorPicker fx:id="fillColorPicker" style="-fx-color-label-visible: false;" />
             </VBox>
         </VBox>
-
         <VBox prefHeight="600.0" spacing="5" style="-fx-border-color: #bdc3c7; -fx-border-width: 1; -fx-border-radius: 3; -fx-padding: 5;">
             <Canvas fx:id="canvas" height="600.0" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);" width="900.0" />
         </VBox>

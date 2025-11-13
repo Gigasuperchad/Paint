@@ -168,8 +168,6 @@ public abstract class Shape {
 
     public double getHeight() { return height; }
     public void setHeight(double height) { this.height = height; }
-
-    public boolean isSelected() { return isSelected; }
     public void setSelected(boolean selected) { isSelected = selected; }
 }
 
@@ -216,8 +214,6 @@ class Rectangle extends Shape {
         drawSelection(gc);
     }
 
-    public Color getStrokeColor() { return strokeColor; }
-    public Color getFillColor() { return fillColor; }
 }
 
 class Ellipse extends Shape {
@@ -262,9 +258,6 @@ class Ellipse extends Shape {
 
         drawSelection(gc);
     }
-
-    public Color getStrokeColor() { return strokeColor; }
-    public Color getFillColor() { return fillColor; }
 }
 
 class Line extends Shape {
@@ -272,8 +265,7 @@ class Line extends Shape {
     private double startX, startY, endX, endY;
 
     public Line(double startX, double startY, double endX, double endY, Color strokeColor) {
-        super(Math.min(startX, endX), Math.min(startY, endY),
-                Math.abs(endX - startX), Math.abs(endY - startY));
+        super(Math.min(startX, endX), Math.min(startY, endY), Math.abs(endX - startX), Math.abs(endY - startY));
         this.startX = startX;
         this.startY = startY;
         this.endX = endX;
@@ -444,7 +436,6 @@ class Polygon extends Shape {
             gc.setLineWidth(2);
             gc.strokePolygon(xPoints, yPoints, sides);
         }
-
         drawSelection(gc);
     }
 

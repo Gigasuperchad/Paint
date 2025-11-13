@@ -64,7 +64,6 @@ public class LocalRepository implements Repository {
         for (Shape shape : shapes) {
             stateCopy.add(shape.copy());
         }
-
         history.push(stateCopy);
 
         while (history.size() > MAX_HISTORY_SIZE) {
